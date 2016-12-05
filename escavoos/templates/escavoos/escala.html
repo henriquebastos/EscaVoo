@@ -1,0 +1,68 @@
+{% extends "escavoos/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+    <form action="{% url 'escavoos:escavoo' %}" method="POST">
+        {% csrf_token %}
+        <h4>Selecione a data desejada:
+            <input type="date" name="date" required>
+        <input type="submit" value="GO"></h4>
+    </form>
+
+    <h2 align="center">{% language 'pt-BR' %}{{ date|date:"l d M Y"}}{% endlanguage %}</h2>
+
+    {% if voos %}
+        <table width="100%" border="1">
+            <tr align="center" height="70" bgcolor="#a9a9a9">
+                <td width="6%"><b>HORARIO</b></td>
+                <td width="12%"><b>COD CHAMADA</b></td>
+                <td width="7%"><b>DIANTEIRO</b></td>
+                <td width="7%"><b>TRASEIRO</b></td>
+                <td width="16%"><b>CÓDIGO DA OI</b></td>
+                <td width="6%"><b>TEMPO</b></td>
+                <td width="6%"><b>ÁREA</b></td>
+                <td width="22%"><b>OBS</b></td>
+                <td width="6%"><b>PARTIDA</b></td>
+                <td width="6%"><b>DECOLAGEM</b></td>
+                <td width="6%"><b>POUSO</b></td>
+            </tr>
+            {% for voo in voos %}
+                <tr align="center" height="30"
+                    bgcolor={% comment %}A linha da tabela muda de cor:
+                                        voo planejado: branco
+                                        voo abortado no solo: vermelho
+                                        piloto chamou para partida: amarelo
+                                        aeronave em voo: verde
+                                        aeronave pousou: azul{% endcomment %}
+                            {% if voo.abortado_solo %}"red"
+                            {% elif voo.hora_pso %}"#6699ff"
+                            {% elif voo.hora_dep %}"#66ff99"
+                            {% elif voo.hora_partida %}"#ffff99"
+                            {% endif %}>
+                    <td>{{ voo.horario|time:"H:i\Z" }}</td>
+                    <td>{{ voo.cod_chamada }}</td>
+                    <td>{{ voo.dianteiro }}</td>
+                    <td>{{ voo.traseiro }}</td>
+                    <td>{{ voo.codigo_oi }}</td>
+                    <td>{{ voo.tempo|time:"H:i" }}</td>
+                    <td>{{ voo.area }}</td>
+                    <td align="left">{{ voo.obs }}</td>
+                    <td>{% if voo.hora_partida != None %}
+                            {{ voo.hora_partida|time:"H:i\Z" }}
+                        {% endif %}</td>
+                    <td>{% if voo.hora_dep != None %}
+                            {{ voo.hora_dep|time:"H:i\Z" }}
+                        {% endif %}</td>
+                    <td>{% if voo.hora_pso != None %}
+                            {{ voo.hora_pso|time:"H:i\Z" }}
+                        {% endif %}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>Não existe voo planejado para esta data.</h2>
+    {% endif %}
+
+
+{% endblock content %}

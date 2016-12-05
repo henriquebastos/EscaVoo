@@ -1,0 +1,7 @@
+.idea
+.env
+escavoo_env
+__pycache__
+*.sqlite3
+*pyc
+start_dev.sh
