@@ -1,0 +1,1 @@
+web: gunicorn escavoos.wsgi --log-file -
