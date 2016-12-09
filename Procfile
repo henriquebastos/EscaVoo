@@ -1,1 +1,1 @@
-web: gunicorn escavoos.wsgi --log-file -
+web: gunicorn escavoo.wsgi --log-file -
