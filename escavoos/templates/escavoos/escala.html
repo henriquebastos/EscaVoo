@@ -1,19 +1,22 @@
 {% extends "escavoos/base.html" %}
 {% load i18n %}
 
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
 {% block content %}
 
-    <form action="{% url 'escavoos:escavoo' %}" method="POST">
+
+    <form action="{% url 'escavoos:escavoo' %}" method="POST" id="data_escavoo">
         {% csrf_token %}
         <h4>Selecione a data desejada:
-            <input type="date" name="date" required>
+            <input type="date" name="date" id="data_selecionada" required>
         <input type="submit" value="GO"></h4>
     </form>
 
     <h2 align="center">{% language 'pt-BR' %}{{ date|date:"l d M Y"}}{% endlanguage %}</h2>
 
     {% if voos %}
-        <table width="100%" border="1">
+        <table width="100%" border="1" id="escala">
             <tr align="center" height="70" bgcolor="#a9a9a9">
                 <td width="6%"><b>HORARIO</b></td>
                 <td width="12%"><b>COD CHAMADA</b></td>
@@ -28,7 +31,7 @@
                 <td width="6%"><b>POUSO</b></td>
             </tr>
             {% for voo in voos %}
-                <tr align="center" height="30"
+                <tr align="center" height="30" id="voo_{{ voo.pk }}"
                     bgcolor={% comment %}A linha da tabela muda de cor:
                                         voo planejado: branco
                                         voo abortado no solo: vermelho
@@ -65,4 +68,42 @@
     {% endif %}
 
 
+<script>
+    var update_colors = function (data) {
+        for (var i = 0; i < data.voos.length; i++) {
+            var voo = voos.data[i];
+            var id = "#voo_" + voo.id;
+            $(id).attr('bgcolor', voo.color);
+        }
+    };
+
+    var today = function () {
+        var today = new Date();
+        var day = today.getDate();
+        var month = today.getMonth();
+        var year = today.getFullYear();
+        return year + '-' + month + '-' + day;
+    };
+
+    var load_colors = function () {
+        var data_selecionada = $('#data_selecionada').val();
+        if (data_selecionada == '') {
+            data_selecionada = today();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/api/",
+            data: { date: data_selecionada },
+            success: update_colors,
+            dataType: 'json'
+        });
+    };
+
+    $(document).ready(function () {
+        setInterval(load_colors, 5000);
+    });
+</script>
+
 {% endblock content %}
+
