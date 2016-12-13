@@ -3,6 +3,7 @@ from django.db import models
 
 class Voo(models.Model):
     """Gerenciar as missões planejadas"""
+
     data = models.DateField(verbose_name='data')
     horario = models.TimeField(verbose_name='horário', help_text='Hora UTC (zulu) no formato 00:00', blank=True)
     cod_chamada = models.CharField(max_length=20, verbose_name='código de Chamada', blank=True)
@@ -24,3 +25,16 @@ class Voo(models.Model):
     def __str__(self):
         """Devolve uma representação em string do modelo"""
         return self.cod_chamada
+
+    @property
+    def status(self):
+        if self.abortado_solo:
+            return 'Abortado'
+        elif self.hora_pso:
+            return 'Pousado'
+        elif self.hora_dep:
+            return 'Voando'
+        elif self.hora_partida:
+            return 'Decolando'
+        else:
+            return 'Planejado'
