@@ -5,7 +5,7 @@ from escavoos.models import Voo
 
 class MyModelAdmin(admin.ModelAdmin):
     list_display = ('data', 'horario', 'cod_chamada', 'dianteiro', 'traseiro', 'codigo_oi',
-                    'tempo', 'area', 'obs', 'hora_partida', 'hora_dep', 'hora_pso', 'abortado_solo')
+                    'tempo', 'area', 'obs', 'hora_partida', 'hora_dep', 'hora_pso', 'status')
     search_fields = ('data', 'horario', 'cod_chamada', 'dianteiro', 'traseiro', 'codigo_oi')
     list_filter = ('data',)
 
